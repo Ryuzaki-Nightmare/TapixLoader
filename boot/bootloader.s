@@ -68,9 +68,9 @@ main:
     lgdt [gdtr] ;Load initial gdt
     or al,1
     mov cr0,eax
+    call get_a20_state
 
-
-    jmp 08h:ModeMain
+    jmp 08h:ModeMain ;Go to 32 bits
 
 
 
@@ -132,7 +132,12 @@ ModeMain:
     mov es,ax
     mov fs,ax
     mov gs,ax
-    mov esp,0x900000 ; UPD stack poiter to secure area!!! 
+    mov esp,0x900000 ; UPD stack poiter to secure area!!!
+    jmp Main32 ;Go to Main Function 32 bits
+Main32:
+    ;MAIN FUNCTION 32 BITS HERE
+    sti
+    TurnOnNMI
 
 ;Use iret to interrupts!!!
 ;0x08 to load cs
