@@ -1,11 +1,6 @@
-[BITS 16]
-[org 0x7c00] ;Boot sector endress
-;This Archive is just Bootloader 16 -> 32 bits
-start:
-    jmp main
-    nop
-
-;THIS A20 from  https://wiki.osdev.org/A20_Line
+[ORG 0x7E00]
+[Bits 16]
+call main
 get_a20_state:
 	pushf
 	push si
@@ -50,16 +45,24 @@ get_a20_state:
 	.BufferBelowMB:	db 0
 	.BufferOverMB	db 0
 
-
-TurnOffNMI;
+;NMI
+TurnOffNMI:
     ; Disable NMI
     mov   al,80h
     out   70h,al
+    ret
+
 TurnOnNMI:
     ; Enable NMI -> Use in 32 Bits
     xor   al,al
-    out  70h,al
+    ret
 
+
+clear:
+    mov ah,00h
+    mov al,03h
+    int 10h
+    iret ; Use iret to interrupt bios
 main:
     ;16 bits Main funcion
     ;Disable ALL INTERRUPTS in cli and  TurnOFFNMI
@@ -137,10 +140,10 @@ ModeMain:
 Main32:
     ;MAIN FUNCTION 32 BITS HERE
     sti
-    TurnOnNMI
+   call  TurnOnNMI
+
 
 ;Use iret to interrupts!!!
 ;0x08 to load cs
 ;0x10 to load ds,ss,es,fs,gs
-times 510 - ($ -$$) db 0
-dw 0xAA55   
+
