@@ -1,6 +1,7 @@
 [ORG 0x7E00]
-[Bits 16]
-call main
+[Bits 16] ; 16 Bits :D
+;This archive is Just 16 to 32 bits, if you want 64bits you can fork to make transition :D
+call main ;Call Main Function
 get_a20_state:
 	pushf
 	push si
@@ -45,24 +46,38 @@ get_a20_state:
 	.BufferBelowMB:	db 0
 	.BufferOverMB	db 0
 
-;NMI
+;NMIs HERE 
 TurnOffNMI:
     ; Disable NMI
     mov   al,80h
     out   70h,al
     ret
-
 TurnOnNMI:
     ; Enable NMI -> Use in 32 Bits
     xor   al,al
     ret
 
 
+
 clear:
+    ;This function clear Screen
     mov ah,00h
     mov al,03h
     int 10h
     iret ; Use iret to interrupt bios
+
+
+align 8
+gdt:
+db 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ; 0x00: null segment
+db 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x9A, 0xCF, 0x00 ; 0x08: 32bit - code segment (ring 0)
+db 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x92, 0xCF, 0x00 ; 0x10: 32bit - data segment (ring 0)
+db 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x9A, 0x00, 0x00 ; 0x18: 16bit - code segment (ring 0)
+db 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x92, 0x00, 0x00 ; 0x20: 16bit - data segment (ring 0)
+gdtend:
+
+    
+
 main:
     ;16 bits Main funcion
     ;Disable ALL INTERRUPTS in cli and  TurnOFFNMI
@@ -74,6 +89,10 @@ main:
     call get_a20_state
 
     jmp 08h:ModeMain ;Go to 32 bits
+
+
+
+
 
 
 

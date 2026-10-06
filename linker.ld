@@ -1,5 +1,5 @@
 ENTRY(start) /*Initial funcion in boot/bootloader.s*/
-OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_FORMAT(binary)
 SECTIONS
 {
     .text :
