@@ -59,12 +59,7 @@ TurnOnNMI:
 
 
 
-clear:
-    ;This function clear Screen
-    mov ah,00h
-    mov al,03h
-    int 10h
-    iret ; Use iret to interrupt bios
+
 
 
 align 8
