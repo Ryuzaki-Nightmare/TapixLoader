@@ -60,6 +60,7 @@ TurnOnNMI:
 
 gdtr:
     dw gdt_end - gdt_start -1
+    dd gdt_start
 
 gdt_start:
     ;null segment
