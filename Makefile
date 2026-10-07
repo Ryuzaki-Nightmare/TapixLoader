@@ -7,11 +7,13 @@ OUT = bootloader.bin
 # USE cat archive.bin > archive2.bin to archive3.bin with archive1.bin and archive2.bin 
 all: $(OUT)
 
-$(OUT): $(SRC)
-	$(ASM) $(ASMFLAGS)   -o $(OUT) $(SRC)
-Main:
+Compile:
+	nasm $(ASMFLAGS) $(SRC) -o stage1.bin
+	nasm $(ASMFLAGS) $(SRC2) -o stage2.bin
+
+Main: Compile
 	cat stage1.bin stage2.bin > bootloader.bin
-run: $(OUT)
+run: Main
 	qemu-system-x86_64 -drive format=raw,file=$(OUT)
 
 clean:
