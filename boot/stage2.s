@@ -52,12 +52,13 @@ TurnOffNMI:
     mov   al,80h
     out   70h,al
     ret
+    
 TurnOnNMI:
     ; Enable NMI -> Use in 32 Bits
     xor   al,al
     ret
 
-
+;GDT CODE
 gdtr:
     dw gdt_end - gdt_start -1
     dd gdt_start
@@ -82,14 +83,25 @@ gdt_start:
     db 0x00
 gdt_end:
 
+;MEMORY MAP functions
+pre_memory_map:
+    mov ax,5
+
+    ret
+Memory_MAP:
+    
 
 
+
+    int 15h
+    ret
 main:
     ;16 bits Main funcion
     ;Disable ALL INTERRUPTS in cli and  TurnOFFNMI
     cli
+    call pre_memory_map
     call TurnOffNMI
-    lgdt [gdtr] ;Load initial gdt
+    lgdt [gdtr] ;Load initial gdt, Bye bye IVT, Hello World Gdt!
     mov eax,cr0 
     or al,1
     mov cr0,eax
