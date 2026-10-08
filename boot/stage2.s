@@ -80,8 +80,6 @@ gdt_start:
     db 10010010b
     db 11001111b
     db 0x00
-
-
 gdt_end:
 
 
@@ -92,6 +90,7 @@ main:
     cli
     call TurnOffNMI
     lgdt [gdtr] ;Load initial gdt
+    mov eax,cr0 
     or al,1
     mov cr0,eax
     call get_a20_state
@@ -167,8 +166,9 @@ ModeMain:
 Main32:
     ;MAIN FUNCTION 32 BITS HERE
     sti
-    call  TurnOnNMI
-
+    call  TurnOnNMI; Turn ON NMI
+    call enable_A20 ; Enable A20
+    
 
 ;Use iret to interrupts!!!
 ;0x08 to load cs
